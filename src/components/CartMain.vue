@@ -5,34 +5,34 @@
           <div class="go-to-shop">继续购物</div>
       </div>
       <div v-else class="cart element">
-          <div class="shoppingCart-top-nav" style="display: block;">
+          <div class="shoppingCart-top-nav" style="display: block;" v-if="flag1">
               <span class="top-nav-left"></span>
-              <span class="top-nav-right">管理</span>
+              <span class="top-nav-right" @click='manage'>管理</span>
           </div>
-          <div class="shoppingCart-edit-bar">
-              <span class="shoppingCart-select-all check-box shoppingCart-check-box checked" style="display: inline-block;">
+          <div class="shoppingCart-edit-bar" v-if="flag2">
+              <span class="shoppingCart-select-all check-box shoppingCart-check-box checked" style="display: inline-block;" @click='cancelAll'>
                   <img src="/images/check.png" alt="">
               </span>
                全选            
               <span class="pull-right">
-                  <span class="shoppingCart-edit-complete btn">完成</span>
+                  <span class="shoppingCart-edit-complete btn" @click='complete'>完成</span>
                   <span class="shoppingCart-delete-goods btn">删除</span>
               </span>
               <span style="clear:both"></span>
           </div>
           <div class="shoppingCart-list-wrap">
               <ul class="shoppingCart-goods-list">
-                  <li>
+                  <li v-for="(item,index) in buycar" :key="index">
                       <div class="shoppingCart-goods-content">
-                          <div class="shoppingCart-check-box check-box pull-left checked">
+                          <div class="shoppingCart-check-box check-box pull-left checked" v-if="flag2" @click="cancel">
                               <img src="/images/check.png" alt="">
                           </div>
                           <div style="display:table-cell;vertical-align: top;width:60px;">
-                              <img src="/images/erzhui1.jpg" alt="" class="shoppingCart-goods-cover">
+                              <img :src="item.img" alt="" class="shoppingCart-goods-cover">
                           </div>
                           <div class="display:table-cell;padding-left:10px;padding-right:10px;vertical-align:top;min-width:200px">
                               <div class="shoppingCart-goods-title">
-                                  <a href="">Leysen小王子的星空 金18k钻石吊坠女 钻石项链女 18K玫瑰金 吊坠</a>
+                                  <a href="">{{item.name}}</a>
                                   <dl class="variation">
                                       <dt class="variation-">分数:</dt>
                                       <dd class="variation-">吊坠</dd>
@@ -40,13 +40,13 @@
                               </div>
                               <div>
                                   <div class="shoppingCart-goods-price-wrap">
-                                      <span class="amount">¥2998</span>
+                                      <span class="amount">¥{{item.price*item.number}}</span>
                                   </div>
                                   <div class="shoppingCart-goods-right">
                                       <div class="quantity">
-                                            <button class="minus " type="button"></button>
-                                            <input type="text" class="txt" value="2">
-                                            <button class="plus" type="button"></button>
+                                            <button class="minus" :disabled="item.number>1?  null:'disabled'" type="button" @click="changeItem({_id:item._id,num:-1})"></button>
+                                            <input type="text" class="txt" :value="item.number" style="width:32px;text-align:center;">
+                                            <button class="plus" type="button" @click="changeItem({_id:item._id,num:1})"></button>
                                             <div class="response-area response-area-minus"></div>
                                             <div class="response-area response-area-plus"></div>
                                         </div>
@@ -62,17 +62,145 @@
   </div>
 </template>
 
-<script>
+<script scoped>
+import $ from 'jquery';
+import {mapGetters,mapActions} from 'vuex';
 export default {
     data(){
         return{
-            shopList:['11']
+            shopList:['11'],
+            flag1:true,
+            flag2:false,
+            ifit:true
         }
-    }
+    },
+    computed:mapGetters(['buycar']),
+    // methods:mapActions(['changeItem','removeItem','clearBuycar']),
+    methods:{
+        ...mapActions(['changeItem','removeItem','clearBuycar']),
+        manage(){
+            this.flag1=false;
+            this.flag2=true
+        },
+        complete(){
+            this.flag1=true;
+            this.flag2=false
+        },
+        cancel(){
+            console.log(event.target.tagName)
+            if(event.target.tagName=='IMG' && $(event.target.parentNode).hasClass('checked')){
+                $(event.target.parentNode).removeClass('checked')
+            }else if(event.target.tagName=='DIV' && $(event.target).hasClass('checked')){
+                $(event.target).removeClass('checked')
+            }else if(event.target.tagName=='IMG' && $(event.target.parentNode).not('.checked')){
+                $(event.target.parentNode).addClass('checked')
+            }else if(event.target.tagName=='DIV' && $(event.target).not('.checked')){
+                $(event.target).addClass('checked')
+            }
+        },
+        cancelAll(){
+            if(event.target.tagName=='IMG' && $(event.target.parentNode).hasClass('checked')){
+                $(event.target.parentNode).removeClass('checked')
+                $('div').removeClass('checked')
+            }else if(event.target.tagName=='SPAN' && $(event.target).hasClass('checked')){
+                $(event.target).removeClass('checked')
+                $('div').removeClass('checked')
+            }else if(event.target.tagName=='IMG' && $(event.target.parentNode).not('.checked')){
+                $(event.target.parentNode).addClass('checked')
+                $('.check-box').addClass('checked')
+            }else if(event.target.tagName=='SPAN' && $(event.target).not('.checked')){
+                $(event.target).addClass('checked')
+                $('.check-box').addClass('checked')
+            }
+        }
+    },
 }
 </script>
 
 <style scoped>
+.quantity .minus:before, .quantity .plus:before {
+    position: absolute;
+    width: 8px;
+    height: 2px;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    background-color: #6c6c6c;
+    bottom: 0;
+    content: '';
+}
+.minus::before,.plus::after,.plus::before {
+    position: absolute;
+    width: 8px;
+    height: 2px;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    background-color: #878787;
+    bottom: 0;
+    content: '';
+}
+.quantity .response-area-plus {
+    right: -5px;
+}
+.quantity .response-area-minus {
+    left: -5px;
+}
+.quantity .plus:after {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    content: '';
+    width: 2px;
+    height: 8px;
+    background-color: #6c6c6c;
+}
+.quantity input {
+    border: none;
+    height: 20px;
+    background-color: #f1f1f1;
+    padding: 0;
+    margin: 0 1px;
+    border-radius: 0;
+    color: #59607B;
+}
+.minus,.plus {
+    position: relative;
+    display: inline-block;
+    font-size: 16px;
+    outline: 0 !important;
+    text-indent: -9999px;
+    overflow: hidden;
+    vertical-align: middle;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    font-weight: normal;
+    background-color: #f1f1f1;
+    color: #878787;
+    border-radius: 2px;
+    border: none;
+}
+.quantity {
+    display: inline-block;
+    position: relative;
+}
+.shoppingCart-goods-right {
+    float: right;
+    text-align: right;
+    padding-right: 5px;
+}
+.shoppingCart-goods-price-wrap {
+    float: left;
+    color: #cc0000;
+    font-size: 12px;
+    line-height: 24px;
+}
 .shoppingCart-goods-list .variation > * {
     display: inline-block;
     margin: 0;
@@ -113,6 +241,9 @@ dl {
 }
 .shoppingCart-goods-list > li:first-child {
     border-top: 1px solid #e5e5e5;
+}
+.shoppingCart-goods-list{
+    background:#fff;
 }
 .btn {
     display: inline-block;
@@ -180,7 +311,7 @@ dl {
     text-align: left;
 }
 .shoppingCart-edit-bar {
-    display: none;
+    display: block;
     background: #fff;
     line-height: 31px;
     padding: 5px 10px;

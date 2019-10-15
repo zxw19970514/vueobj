@@ -65,7 +65,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .tba{
     vertical-align: top;
      text-align: center;

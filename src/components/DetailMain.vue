@@ -66,19 +66,22 @@
       <div class="goods-bottom-opt extra-bottom-opt" style="display:block;">
           <div class="goods-bottom-bar">
               <div class="flex-sub-box-2">
-                  <button class="btn btn-yellow add-to-shoppingcart" style="background-color:#000000;color:#ffffff">加入购物车</button>
+                  <button class="btn btn-yellow add-to-shoppingcart" style="background-color:#000000;color:#ffffff" @click='addItem(detailData)'>加入购物车</button>
               </div>
-              <div class="flex-sub-box-2">
+              <router-link to="/shopCart" tag='div' class="flex-sub-box-2">
                   <button class="btn btn-orange buy-goods-directly" style="background-color:#cc0000;color:#ffffff">立即购买</button>
-              </div>
+              </router-link>
           </div>
       </div>
   </div>
 </template>
 
 <script>
+import {mapGetters,mapActions} from 'vuex';
 export default {
-    props:['detailData']
+    props:['detailData'],
+    computed:mapGetters(['buycar']),
+    methods:mapActions(['addItem'])
 }
 </script>
 
