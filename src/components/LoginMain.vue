@@ -4,18 +4,19 @@
         <div class="regbody">
             <form action="">
                 <div class="qfyuser-field">
-                    <div class="qfyuser-label"><label for="">电话号码</label><div class="required">*</div></div>
-                    <div class="qfyuser-input "><input type="text"></div>
+                    <div class="qfyuser-label"><label for="">账号</label><div class="required">*</div></div>
+                    <div class="qfyuser-input "><input type="text" v-model='username'></div>
                 </div>
                 <div class="qfyuser-clear"></div>
                 <div  class="qfyuser-field">
                     <div class="qfyuser-label"><label for="">密码</label><div class="required">*</div></div>
-                    <div class="qfyuser-input "><input type="password"></div>
+                    <div class="qfyuser-input "><input type="password" v-model="password"></div>
                 </div>
+                <span v-if="mess">{{mess}}</span>
                 <div class="qfyuser-clear"></div>
                 <div  class="qfyuser-field qfyuser-submit">
-                    <input type="button" value="注册" class="fullwidth-block qfyuser-button">
-                    <input type="submit" value="已经有帐号了？请登录" class="fullwidth-block secondary qfyuser-button">
+                    <input type="button" value="注册" class="fullwidth-block qfyuser-button" @click='login'>
+                    <input type="button" value="已经有帐号了？请登录" class="fullwidth-block secondary qfyuser-button">
                 </div>
             </form>
           </div>
@@ -24,8 +25,36 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
-
+    data(){
+        return{
+            username:'',
+            password:'',
+            mess:''
+        }
+    },
+    methods:{
+        login(){
+            axios({
+                url:'http://localhost:3000/api/reg',
+                method:'post',
+                withCredentials: true,
+                data:{
+                    username:this.username,
+                    password:this.password
+                }
+            }).then(
+                res=>{
+                    if(res.data.err===1){
+                        this.mess=res.data.msg;
+                    }else{
+                        this.$router.push('/reg')
+                    }
+                }
+            )
+        }
+    }  
 }
 </script>
 

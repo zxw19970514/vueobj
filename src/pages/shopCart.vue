@@ -1,24 +1,19 @@
 <template>
-  <div class="user">
-      <UserHead></UserHead>
-      <UserMain></UserMain>
-      <Footer></Footer>
-  </div>
+    <div class="app">
+        <CartHeader></CartHeader>
+        <CartMain></CartMain>
+        <Footer></Footer>
+    </div>
 </template>
 
 <script>
-import UserMain from '../components/UserMain'
-import UserHead from '../components/UserHead'
+import CartHeader from '../components/CartHeader'
+import CartMain from '../components/CartMain'
 import Footer from '../components/Footer'
 import axios from 'axios'
 export default {
-    data(){
-        return{
-            userdata:{}
-        }
-    },
     components:{
-        UserHead,Footer,UserMain
+        CartHeader,CartMain,Footer
     },
     beforeRouteEnter(to,from,next){
         axios({
@@ -30,7 +25,7 @@ export default {
                 res.data.err===0? next(): next('/reg')
                 }
         )
-    },
+    }
 }
 </script>
 

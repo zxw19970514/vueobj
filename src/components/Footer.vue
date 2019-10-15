@@ -14,14 +14,14 @@
             </a>
             <a href="" class="bottom-text">商店</a>
         </router-link>
-        <div class="item router">
+        <router-link  to='/shopCart' tag='div' class="item router">
             <a href="">
                 <img src="/images/cartIcon-off.png" alt="" class="img-wrap">
                 <!-- <img src="/images/cartIcon-on.png" alt=""> -->
             </a>
             <a href="" class="bottom-text">购物车</a>
-        </div>
-        <router-link to='/Reg' tag='div' class="item router">
+        </router-link>
+        <router-link to='/User' tag='div' class="item router">
             <a href="">
                 <img src="/images/userIcon-off.png" alt="" class="img-wrap">
                 <!-- <img src="/images/userIcon-on.png" alt=""> -->

@@ -4,19 +4,20 @@
         <div class="regbody">
             <form action="">
                 <div class="qfyuser-field">
-                    <div class="qfyuser-label"><label for="">手机</label></div>
-                    <div class="qfyuser-input "><input type="text"></div>
+                    <div class="qfyuser-label"><label for="">账号</label></div>
+                    <div class="qfyuser-input "><input type="text" v-model='username'></div>
                 </div>
                 <div class="qfyuser-clear"></div>
                 <div  class="qfyuser-field">
                     <div class="qfyuser-label"><label for="">密码</label></div>
-                    <div class="qfyuser-input "><input type="password"></div>
+                    <div class="qfyuser-input "><input type="password" v-model='password'></div>
                 </div>
+                <span v-if="mess">{{mess}}</span>
                 <div class="qfyuser-clear"></div>
                 <div  class="qfyuser-field qfyuser-submit">
-                    <input type="submit" class="qfyuser-button" value="登陆">
+                    <input type="button" class="qfyuser-button" value="登陆" @click='reg'>
                     <router-link to='/Login' tag='span'>
-                        <input type="submit" class="qfyuser-button secondary" value="注册">
+                        <input type="button" class="qfyuser-button secondary" value="注册">
                     </router-link>
                     <a href="" style="float:right">忘记密码,点这里找回</a>
                 </div>
@@ -27,8 +28,41 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
-
+    data(){
+        return{
+            username:'',
+            password:'',
+            mess:'',
+            listData:{}
+        }
+    },
+    methods:{
+        reg(){
+            axios({
+                url:'http://localhost:3000/api/login',
+                method:'post',
+                withCredentials: true,
+                data:{
+                    username:this.username,
+                    password:this.password,
+                    save:true
+                }
+            }).then(
+                res=>{
+                    if(res.data.err==1){
+                        this.mess=res.data.msg;
+                    }else{
+                        this.listData=res.data.data;
+                        this.$root.$data.username=this.listData.username;
+                        console.log(this.listData)
+                        this.$router.push('/user')
+                    }
+                }
+            )
+        }
+    }
 }
 </script>
 
