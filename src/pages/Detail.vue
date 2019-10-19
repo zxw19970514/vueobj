@@ -23,9 +23,9 @@ export default {
         let id=this.$route.params.id;
         let dataName=this.$route.query.dataName;
         axios({
-            url:`http://localhost:3000/api/${dataName}/${id}`
+            url:`/api/${dataName}/${id}`
         }).then(
-            res=>this.detailData=res.data.data
+            res=>{this.detailData=res.data.data}
         )
     }
 }

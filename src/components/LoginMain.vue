@@ -37,7 +37,7 @@ export default {
     methods:{
         login(){
             axios({
-                url:'http://localhost:3000/api/reg',
+                url:'/api/reg',
                 method:'post',
                 withCredentials: true,
                 data:{

@@ -11,6 +11,7 @@ import UserMain from '../components/UserMain'
 import UserHead from '../components/UserHead'
 import Footer from '../components/Footer'
 import axios from 'axios'
+import { mapActions } from 'vuex'
 export default {
     data(){
         return{
@@ -20,9 +21,10 @@ export default {
     components:{
         UserHead,Footer,UserMain
     },
+    method:mapActions(['clearBuycar']),
     beforeRouteEnter(to,from,next){
         axios({
-            url:'http://localhost:3000/api/user',
+            url:'/api/user',
             withCredentials: true,
             method:'get'
         }).then(

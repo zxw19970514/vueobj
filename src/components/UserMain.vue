@@ -5,52 +5,68 @@
               <span class="empty-span"></span>
               <img src="/images/user.png" alt=""  class="cover-thumb">
               <a href="#" class="nickname">
-                    {{this.$root.$data.username}}
+                    {{user}}
               </a><span @click='loginout' style="color:#00f">注销</span>
               <span class="empty-span"></span>
           </div>
-          <div class="horizontal-router-container1">
-              <div style="opacity: 1; font-size: 12px; margin-top: 5px; color: #000000; background-color: #ffffff;">
-                    <p style="height: 45px; line-height: 45px; border-bottom: 1px solid transparent; text-indent: 20px;font-size:12px ;font-weight:normal ;font-style:normal ;font-family:默认 ; ">
-                        我的订单                    
-                    </p>
-                    <ul style="overflow:hidden">
-                        <li class="tba">付款中</li>
-                        <li class="tba">已付款</li>
-                        <li class="tba">已发货</li>
-                        <li class="tba">已退款</li>
-                        <li class="tba">已取消</li>
-                    </ul>
-              </div>
-            <div style="opacity: 1; font-size: 12px; margin-top: 5px; color: #000000; background-color: #ffffff;">
-                <p style="height: 45px; line-height: 45px; border-bottom: 1px solid transparent; text-indent: 20px;font-size:12px ;font-weight:normal ;font-style:normal ;font-family:默认 ; ">
-                    我的工具                   
-                </p>
-                <ul style="overflow:hidden">
-                    <li class="tba">购物车</li>
-                    <li class="tba">收藏夹</li>
-                </ul>
+          <van-panel title="我的订单"  status="更多">
+            <div>
+            <van-grid>
+                <van-grid-item icon="cash-back-record" text="付款中" />
+                <van-grid-item icon="after-sale" text="已付款" />
+                <van-grid-item icon="logistics" text="已发货" />
+                <van-grid-item icon="refund-o" text="已退款" />
+                <van-grid-item icon="peer-pay" text="已取消" />
+            </van-grid>
             </div>
-            <div style="opacity: 1; font-size: 12px; margin-top: 5px; color: #000000; background-color: #ffffff;">
-                <p style="height: 45px; line-height: 45px; border-bottom: 1px solid transparent; text-indent: 20px;font-size:12px ;font-weight:normal ;font-style:normal ;font-family:默认 ; ">
-                    会员中心                    
-                </p>
-                <ul style="overflow:hidden">
-                    <li class="tba">优惠券</li>    
-                </ul>
+          </van-panel>
+          <van-panel title="我的工具"  status="更多">
+            <div>
+            <van-grid>
+                <van-grid-item to="/shopCart" icon="cart-o" text="购物车" />
+                <van-grid-item icon="star-o" text="收藏夹" />
+            </van-grid>
             </div>
-          </div>
+          </van-panel>
+          <van-panel title="会员中心"  status="更多">
+            <div>
+            <van-grid>
+                <van-grid-item  icon="coupon-o" text="优惠券"  @click="showList = true;go=true"/>
+            </van-grid>
+            </div>
+          </van-panel>
       </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios'
+import Vue from 'vue';
+import { Panel } from 'vant';
+import { Grid, GridItem } from 'vant';
+Vue.use(Grid).use(GridItem);
+Vue.use(Panel);
+const coupon = {
+  available: 1,
+  condition: '无使用门槛\n最多优惠12元',
+  reason: '',
+  value: 150,
+  name: '优惠券名称',
+  startAt: 1489104000,
+  endAt: 1514592000,
+  valueDesc: '1.5',
+  unitDesc: '元'
+};
 export default {
+    data(){
+        return{
+            user:'',
+            active: 0,
+        }
+    },
     methods:{
         loginout(){
             axios({
-                url:'http://localhost:3000/api/logout',
+                url:'/api/logout',
                 method:'delete',
                 withCredentials: true,
             }).then(
@@ -60,7 +76,14 @@ export default {
                     }
                 }
             )
-        }
+        },
+    },
+    mounted(){
+        axios({
+            url:'/api/user',
+        }).then(
+            res=>this.user=res.data.data.username
+        )
     }
 }
 </script>

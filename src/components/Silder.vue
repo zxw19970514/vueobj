@@ -1,44 +1,49 @@
 <template>
     <div class="banner">
-        <ul class="clearfix">
-
-        <router-link to="/detail/1" tag="li">
-            <img src="/images/banner1.jpg" alt=""/>
-        </router-link>
-
-        <router-link to="/detail/2" tag="li">
-            <img src="/images/banner2.jpg" alt=""/>
-        </router-link>
-        </ul>
+        <swiper :options="swiperOption" ref="mySwiper" >
+            <!-- slides -->
+            <swiper-slide><img src="/images/banner1.jpg" alt=""></swiper-slide>
+            <swiper-slide><img src="/images/banner2.jpg" alt=""></swiper-slide>
+            <!-- Optional controls -->
+            <div class="swiper-pagination"  slot="pagination"></div>
+        </swiper>
     </div>
 </template>
 
 <script>
-    import $ from 'jquery';
-    import Swipe from '../assets/js/swipe.js';
-
+    import 'swiper/dist/css/swiper.css'
+    import { swiper, swiperSlide } from 'vue-awesome-swiper'
     export default {
-        props:['banner'],
-        mounted(){
-            new Swipe($('.banner')[0],{
-            auto:2000,
-            continuous:true,
-            stopPropation:true,
-            callback:function (index,element){
-                $('.banner ol li').removeClass('active');
-                $('.banner ol li').eq(index).addClass('active');
+        name: 'HomeSwiper',
+         data() {
+            return {
+                swiperOption: {
+                    pagination: {
+                    el: ".swiper-pagination",
+                    clickable: true,
+                    type: "bullets"
+                    },
+                    //循环
+                    loop:true,
+                    //每张播放时长3秒，自动播放
+                    autoplay: {
+                    delay: 1500,
+                    stopOnLastSlide: false,
+                    disableOnInteraction: false
+                    },
+                    speed: 1000,
+                }
             }
-            })
-
-        }
-        }
+        },
+        components: {
+            swiper,
+            swiperSlide
+        },
+    }
 </script>
 
-<style>
+<style scoped>
     .banner{margin-top:0.6rem;position: relative;overflow: hidden; z-index: 1}
-    .banner ul li{width:6.4rem;float:left;position: relative;}
-    .banner ul li img{width:100%; display:block;}
-    .banner ol{position:absolute; right:0.2rem;bottom:0.2rem;}
-    .banner ol li{width:0.15rem;height:0.15rem; background:#5477b2; float:left; border-radius:50%; margin-right:0.08rem;}
-    .banner ol li.active{ background:#fff;}
+    .banner{width:6.4rem;position: relative;}
+    img{width:100%;}
 </style>

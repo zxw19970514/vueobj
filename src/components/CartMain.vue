@@ -1,8 +1,8 @@
 <template>
   <div class="cartMain element" style="margin:0 auto;">
-      <div v-if='shopList.length==0' class="cart-empty">
+      <div v-if='buycar.length==0' class="cart-empty" style="text-align:center">
           <img src="/images/shoppingcart.png" alt="" class="cartImg">
-          <div class="go-to-shop">继续购物</div>
+          <router-link to="/Shop" tag="div" class="go-to-shop">继续购物</router-link>
       </div>
       <div v-else class="cart element">
           <div class="shoppingCart-top-nav" style="display: block;" v-if="flag1">
@@ -10,21 +10,21 @@
               <span class="top-nav-right" @click='manage'>管理</span>
           </div>
           <div class="shoppingCart-edit-bar" v-if="flag2">
-              <span class="shoppingCart-select-all check-box shoppingCart-check-box checked" style="display: inline-block;" @click='cancelAll'>
+              <span class="shoppingCart-select-all check-box shoppingCart-check-box" :class="{checked:isSelected}" style="display: inline-block;" @click='cancelAll'>
                   <img src="/images/check.png" alt="">
               </span>
                全选            
               <span class="pull-right">
                   <span class="shoppingCart-edit-complete btn" @click='complete'>完成</span>
-                  <span class="shoppingCart-delete-goods btn">删除</span>
+                  <span class="shoppingCart-delete-goods btn" @click='remove'>删除</span>
               </span>
               <span style="clear:both"></span>
           </div>
           <div class="shoppingCart-list-wrap">
-              <ul class="shoppingCart-goods-list">
-                  <li v-for="(item,index) in buycar" :key="index">
+                <ul class="shoppingCart-goods-list">
+                  <li v-for="item in buycar" :key="item._id">
                       <div class="shoppingCart-goods-content">
-                          <div class="shoppingCart-check-box check-box pull-left checked" v-if="flag2" @click="cancel">
+                          <div class="shoppingCart-check-box check-box pull-left son-check checked"  ref="li" :data-value="item._id" v-if="flag2" @click="cancel">
                               <img src="/images/check.png" alt="">
                           </div>
                           <div style="display:table-cell;vertical-align: top;width:60px;">
@@ -57,63 +57,115 @@
                   </li>
               </ul>
           </div>
-          <div class="shoppingCart-bottom-nav extra-bottom-opt"></div>
+          <div v-if="flag3" class="shoppingCart-bottom-nav extra-bottom-opt" style="display:block">
+              <a href="#">
+                  <span class="btn pull-right shoppingCart-goto-pay">结算</span>
+              </a>
+              <span class="pull-right" style="margin-right: 10px;">
+                  <span class="shoppingCart-all-price">
+                      <span class="amount">￥{{sumPrice}}</span>
+                  </span>
+              </span>
+          </div>
       </div>
   </div>
 </template>
 
 <script scoped>
-import $ from 'jquery';
+import state from '../store/state'
 import {mapGetters,mapActions} from 'vuex';
 export default {
     data(){
         return{
-            shopList:['11'],
             flag1:true,
             flag2:false,
-            ifit:true
+            flag3:true,
+            ifit:true,
+            removeList:[],
+            isSelected:true
         }
     },
-    computed:mapGetters(['buycar']),
-    // methods:mapActions(['changeItem','removeItem','clearBuycar']),
+    computed:{
+        ...mapGetters(['buycar']),
+        sumPrice:()=>{
+            let Price=0;
+            for(var i=0;i<state.buycar.length;i++){
+                Price+=Number(state.buycar[i].price*state.buycar[i].number);
+            }
+            return Price;
+        }
+    },
     methods:{
-        ...mapActions(['changeItem','removeItem','clearBuycar']),
+        ...mapActions(['changeItem','removeItem','userList']),
+        remove(){
+            for(var i=0;i<this.$refs.li.length;i++){
+                if(this.$refs.li[i].className.indexOf('checked') != -1 ){
+                    this.removeItem({_id:this.$refs.li[i].dataset.value})
+                }
+            }
+        },
         manage(){
             this.flag1=false;
-            this.flag2=true
+            this.flag2=true;
+            this.flag3=false;
+            this.isSelected=true;
+            ;
         },
         complete(){
             this.flag1=true;
-            this.flag2=false
+            this.flag2=false;
+            this.flag3=true;
         },
         cancel(){
-            console.log(event.target.tagName)
-            if(event.target.tagName=='IMG' && $(event.target.parentNode).hasClass('checked')){
-                $(event.target.parentNode).removeClass('checked')
-            }else if(event.target.tagName=='DIV' && $(event.target).hasClass('checked')){
-                $(event.target).removeClass('checked')
-            }else if(event.target.tagName=='IMG' && $(event.target.parentNode).not('.checked')){
-                $(event.target.parentNode).addClass('checked')
-            }else if(event.target.tagName=='DIV' && $(event.target).not('.checked')){
-                $(event.target).addClass('checked')
+            if(event.target.tagName=='IMG' && event.target.parentNode.className.indexOf('checked')!=-1){
+                event.target.parentNode.classList.remove('checked')
+                this.isSelected=false          
+            }else if(event.target.tagName=='DIV' && event.target.className.indexOf('checked')!=-1){
+                event.target.classList.remove('checked')
+                this.isSelected=false          
+            }else if(event.target.tagName=='IMG' && event.target.parentNode.className.indexOf('checked')==-1){
+                event.target.parentNode.classList.add('checked')          
+                for(var i=0;i<this.$refs.li.length;i++){
+                    if(this.$refs.li[i].className.indexOf('checked')!=-1){
+                        continue;
+                    }else{
+                        return;
+                    }
+                }
+                this.isSelected=true;
+            }else if(event.target.tagName=='DIV' && event.target.className.indexOf('checked')==-1){
+                event.target.classList.add('checked')          
             }
         },
         cancelAll(){
-            if(event.target.tagName=='IMG' && $(event.target.parentNode).hasClass('checked')){
-                $(event.target.parentNode).removeClass('checked')
-                $('div').removeClass('checked')
-            }else if(event.target.tagName=='SPAN' && $(event.target).hasClass('checked')){
-                $(event.target).removeClass('checked')
-                $('div').removeClass('checked')
-            }else if(event.target.tagName=='IMG' && $(event.target.parentNode).not('.checked')){
-                $(event.target.parentNode).addClass('checked')
-                $('.check-box').addClass('checked')
-            }else if(event.target.tagName=='SPAN' && $(event.target).not('.checked')){
-                $(event.target).addClass('checked')
-                $('.check-box').addClass('checked')
+            if(event.target.tagName=='IMG' && event.target.parentNode.className.indexOf('checked')!=-1){
+                event.target.parentNode.classList.remove('checked')
+                this.isSelected=false;    
+                for(var i=0;i<this.$refs.li.length;i++){
+                    this.$refs.li[i].classList.remove('checked')
+                }
+            }else if(event.target.tagName=='SPAN' && event.target.className.indexOf('checked')!=-1){
+                event.target.classList.remove('checked')
+                this.isSelected=false;
+                for(var i=0;i<this.$refs.li.length;i++){
+                    this.$refs.li[i].classList.remove('checked')
+                }  
+            }else if(event.target.tagName=='IMG' && event.target.parentNode.className.indexOf('checked')==-1){    
+                this.isSelected=true; 
+                for(var i=0;i<this.$refs.li.length;i++){
+                    this.$refs.li[i].classList.add('checked')
+                }
+            }else if(event.target.tagName=='SPAN' && event.target.className.indexOf('checked')==-1){             
+                this.isSelected=true;
+                for(var i=0;i<this.$refs.li.length;i++){
+                    this.$refs.li[i].classList.add('checked')
+                }         
             }
         }
     },
+    mounted(){
+        this.userList();
+    }
 }
 </script>
 
@@ -358,5 +410,17 @@ dl {
 }
 .pull-right {
     float: right;
+}
+.shoppingCart-goto-pay {
+    width: 80px;
+    background-color: #000000;
+    border-color: #000000;
+    color: #ffffff;
+    border-radius: 0;
+    line-height: 45px;
+    padding: 0 5px;
+}
+.shoppingCart-all-price{
+    color:#f00;
 }
 </style>

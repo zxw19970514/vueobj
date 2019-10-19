@@ -22,7 +22,7 @@ export default {
     },
     mounted(){
         axios({
-            url:'http://localhost:3000/api/column',
+            url:'/api/column',
         }).then(
             res=>{this.listData=res.data.data;}
         )

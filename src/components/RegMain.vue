@@ -29,6 +29,7 @@
 
 <script>
 import axios from 'axios'
+import { mapActions } from 'vuex';
 export default {
     data(){
         return{
@@ -41,7 +42,7 @@ export default {
     methods:{
         reg(){
             axios({
-                url:'http://localhost:3000/api/login',
+                url:'/api/login',
                 method:'post',
                 withCredentials: true,
                 data:{
@@ -56,13 +57,12 @@ export default {
                     }else{
                         this.listData=res.data.data;
                         this.$root.$data.username=this.listData.username;
-                        console.log(this.listData)
                         this.$router.push('/user')
                     }
                 }
             )
         }
-    }
+    },
 }
 </script>
 

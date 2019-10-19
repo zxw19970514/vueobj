@@ -3,7 +3,11 @@
       <div class="goods-detail-content">
           <div class="goods-detail-section">
               <div class="slick-carousel-container" style="height:320px;">
-                  <img :src="detailData.img" :alt="detailData.name" style="width:100%;height:100%">
+                  <van-swipe :autoplay="3000" indicator-color="white" style="height:100%">
+                        <van-swipe-item><img :src="detailData.img" style="width:100%"></van-swipe-item>
+                        <van-swipe-item><img :src="detailData.img" style="width:100%"></van-swipe-item>
+                        <van-swipe-item><img :src="detailData.img" style="width:100%"></van-swipe-item>
+                    </van-swipe>
               </div>
               <div class="goods-header">
                   <div class="goods-current-price goods-price">
@@ -24,7 +28,7 @@
                           </dd>
                       </dl>
                   </div>
-                  <div class="goods-models select-model" style="display: block;border:0;">
+                  <div class="goods-models select-model" style="display: block;border:0;" @click="haha">
                       <dl>
                           <dt style="color:#000000">选择商品规格</dt>
                           <dd style="color:#000000"> > </dd>
@@ -69,7 +73,7 @@
                   <button class="btn btn-yellow add-to-shoppingcart" style="background-color:#000000;color:#ffffff" @click='addItem(detailData)'>加入购物车</button>
               </div>
               <router-link to="/shopCart" tag='div' class="flex-sub-box-2">
-                  <button class="btn btn-orange buy-goods-directly" style="background-color:#cc0000;color:#ffffff">立即购买</button>
+                  <button class="btn btn-orange buy-goods-directly" style="background-color:#cc0000;color:#ffffff">进入购物车</button>
               </router-link>
           </div>
       </div>
@@ -78,10 +82,35 @@
 
 <script>
 import {mapGetters,mapActions} from 'vuex';
+import Vue from 'vue';
+import { Sku } from 'vant';
+import { Swipe, SwipeItem } from 'vant';
+Vue.use(Swipe).use(SwipeItem);
+Vue.use(Sku);
 export default {
+    data(){
+        return{
+        }
+        },
     props:['detailData'],
     computed:mapGetters(['buycar']),
-    methods:mapActions(['addItem'])
+    methods:{
+        ...mapActions(['addItem']),
+        onBuyClicked(data) {
+          this.$toast('buy:' + JSON.stringify(data));
+        },
+
+        onAddCartClicked(data) {
+        this.$toast('add cart:' + JSON.stringify(data));
+        }, 
+        haha(){
+            if(this.showBase==true){
+                this.showBase=false
+            }else{
+                this.showBase=true
+            }
+        }    
+    },
 }
 </script>
 

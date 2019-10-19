@@ -3,17 +3,17 @@
       <div class="element" style="width:20.98%;display:inline-block;float:left;position:relative;">
           <ul class="shopul">
               <li class="item selected" @click='all'><span>全部</span></li>
-              <li class="item" ><span>戒指</span></li>
-              <li class="item" ><span>手链</span></li>
+              <li class="item" @click="jiezhi"><span>戒指</span></li>
+              <li class="item" @click="shoulian"><span>手链</span></li>
               <li class="item" @click='ershi'><span>耳饰</span></li>
               <li class="item" @click="xianglian"><span>项链</span></li>
           </ul>
       </div>
       <div class="element" style="width:79.00%;display:inline-block;float:left;position:relative;">
           <ul>
-              <li  v-for="item of listData" :key="item._id" style="margin-bottom: 0px; background-color: #ffffff; height: 80px;">
+              <li  v-for="item of list" :key="item._id" style="margin-bottom: 0px; background-color: #ffffff; height: 80px;">
                   <router-link  :to="'/detail/'+item._id+'?dataName='+dataName">
-                      <img :src="item.img" alt="" style="width: 60px; height: 60px;margin-left:auto;" class="list-img">
+                      <img  alt="" v-lazy="item.img" style="width: 60px; height: 60px;margin-left:auto;" class="list-img">
                       <div class="title-container" style=" width:230px;">
                           <p class="shopd">{{item.name}}</p>
                           <p class="price" style="padding-left:10px;width:230px;;overflow: hidden;color:#cc0000;margin-top:5px;margin-bottom:10px;">￥{{item.price}}</p>
@@ -22,82 +22,155 @@
               </li>
           </ul>
       </div>
+      <div class="goTop" style="position:fixed;right:0;bottom:50px;width:30px;background-color:#fff;border-radius:50%   ">
+          <van-icon name="arrow-up" size="30px" @click="backTop"/>
+      </div>
   </div>
 </template>
 
  <script>
- import axios from 'axios'
+ import Vue from 'vue';
+import { Icon } from 'vant';
+import { Lazyload } from 'vant';
+Vue.use(Lazyload);
+Vue.use(Icon);
  export default {
+     data(){
+         return{
+             list:null
+         }
+     },
      props:['listData','dataName'],
      methods:{
         xianglian(){
             axios({
-            url:'http://localhost:3000/api/column',
+            url:'/api/column',
             params:{type:'项链'},
             }).then(
-            res=>{this.listData=res.data.data;}
+            res=>{this.list=res.data.data;}
             )
             // event.target.className=event.target.className+'selected'
-            for(var i=0;i<event.target.parentNode.children.length;i++){
-                event.target.parentNode.children[i].classList.remove('selected')
+            if(event.target.tagName == "LI"){
+                for(var i=0;i<event.target.parentNode.children.length;i++){
+                    event.target.parentNode.children[i].classList.remove('selected')
+                }
+                event.target.classList.add('selected')
+            }else{
+                for(var i=0;i<event.target.parentNode.parentNode.children.length;i++){
+                    event.target.parentNode.parentNode.children[i].classList.remove('selected')
+                }
+                event.target.parentNode.classList.add('selected')
             }
-            event.target.classList.add('selected')
         },
         ershi(){
             axios({
-            url:'http://localhost:3000/api/column',
+            url:'/api/column',
             params:{type:'耳饰'},
             }).then(
-            res=>{this.listData=res.data.data;console.log(this.msg)}
+            res=>{this.list=res.data.data;}
             )
-            for(var i=0;i<event.target.parentNode.children.length;i++){
-                event.target.parentNode.children[i].classList.remove('selected')
+            if(event.target.tagName == "LI"){
+                for(var i=0;i<event.target.parentNode.children.length;i++){
+                    event.target.parentNode.children[i].classList.remove('selected')
+                }
+                event.target.classList.add('selected')
+            }else{
+                for(var i=0;i<event.target.parentNode.parentNode.children.length;i++){
+                    event.target.parentNode.parentNode.children[i].classList.remove('selected')
+                }
+                event.target.parentNode.classList.add('selected')
             }
-            event.target.classList.add('selected')
+        },
+        jiezhi(){
+            axios({
+            url:'/api/column',
+            params:{type:'戒指'},
+            }).then(
+            res=>{this.list=res.data.data;}
+            )
+            if(event.target.tagName == "LI"){
+                for(var i=0;i<event.target.parentNode.children.length;i++){
+                    event.target.parentNode.children[i].classList.remove('selected')
+                }
+                event.target.classList.add('selected')
+            }else{
+                for(var i=0;i<event.target.parentNode.parentNode.children.length;i++){
+                    event.target.parentNode.parentNode.children[i].classList.remove('selected')
+                }
+                event.target.parentNode.classList.add('selected')
+            }
+        },
+        shoulian(){
+            axios({
+            url:'/api/column',
+            params:{type:'手链'},
+            }).then(
+            res=>{this.list=res.data.data;}
+            )
+            if(event.target.tagName == "LI"){
+                for(var i=0;i<event.target.parentNode.children.length;i++){
+                    event.target.parentNode.children[i].classList.remove('selected')
+                }
+                event.target.classList.add('selected')
+            }else{
+                for(var i=0;i<event.target.parentNode.parentNode.children.length;i++){
+                    event.target.parentNode.parentNode.children[i].classList.remove('selected')
+                }
+                event.target.parentNode.classList.add('selected')
+            }
         },
         all(){
             axios({
-                url:'http://localhost:3000/api/column',
+                url:'/api/column',
             }).then(
-                res=>{this.listData=res.data.data;}
+                res=>{this.list=res.data.data;}
             )
-            for(var i=0;i<event.target.parentNode.children.length;i++){
+            if(event.target.tagName == "LI"){
+                for(var i=0;i<event.target.parentNode.children.length;i++){
                     event.target.parentNode.children[i].classList.remove('selected')
                 }
-            event.target.classList.add('selected')
-        }
-        // jizhi(){
-        //     axios({
-        //     url:'http://localhost:3000/api/column',
-        //     params:{type:'戒指'},
-        //     }).then(
-        //     res=>{this.msg=res.data.data;console.log(this.msg)}
-        //     )
-        // },
-        // shoulian(){
-        //     axios({
-        //     url:'http://localhost:3000/api/column',
-        //     params:{type:'手链'},
-        //     }).then(
-        //     res=>{this.msg=res.data.data;console.log(this.msg)}
-        //     )
-        // }
-    }
+                event.target.classList.add('selected')
+            }else{
+                for(var i=0;i<event.target.parentNode.parentNode.children.length;i++){
+                    event.target.parentNode.parentNode.children[i].classList.remove('selected')
+                }
+                event.target.parentNode.classList.add('selected')
+            }
+        },
+        backTop () {
+            const that = this
+            let timer = setInterval(() => {
+                let ispeed = Math.floor(-that.scrollTop / 5)
+                document.documentElement.scrollTop = document.body.scrollTop = that.scrollTop + ispeed
+                if (that.scrollTop === 0) {
+                clearInterval(timer)
+                }
+            }, 16)
+        },
+ 
+        scrollToTop () {
+            const that = this
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
+            that.scrollTop = scrollTop
+            if (that.scrollTop > 60) {
+            that.btnFlag = true
+            } else {
+            that.btnFlag = false
+            }
+        },
+    },
+    mounted(){
+        axios({
+                url:'/api/column',
+            }).then(
+                res=>{this.list=res.data.data;}
+            ),
+        window.addEventListener('scroll', this.scrollToTop)
+    },   
+    destroyed () {
+    window.removeEventListener('scroll', this.scrollToTop)
+    },
  }
-// export default {
-//     data(){
-//         return{
-//             msg:[]
-//         }
-//     },
-//     mounted(){
-//         axios({
-//             url:'http://localhost:3000/api/column',
-//         }).then(
-//             res=>{this.msg=res.data.data;}
-//         )
-//     },
-// }
  </script>
 
 <style scoped>
